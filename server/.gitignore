@@ -3,3 +3,4 @@ env/
 .env
 dist/
 .pnpm-debug.log
+temp_bible/

@@ -37,8 +37,10 @@
     "@prisma/adapter-pg": "^7.4.2",
     "@prisma/client": "^7.4.2",
     "awilix": "^13.0.3",
+    "cheerio": "^1.2.0",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "node-fetch": "^3.3.2",
     "pg": "^8.19.0",
     "zod": "^4.3.6"
   },
