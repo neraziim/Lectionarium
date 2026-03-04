@@ -3,8 +3,31 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
+  "imports": {
+    "#generated/*": "./generated/*",
+    "#config": "./src/config/config.js",
+    "#db/*": "./src/db/*",
+    "#docs/*": "./src/docs/*",
+    "#repository": "./src/repository/index.js",
+    "#constants": "./src/common/constants/index.js",
+    "#exceptions": "./src/common/exceptions/index.js",
+    "#controllers": "./src/controllers/index.js",
+    "#controllers/*": "./src/controllers/*",
+    "#services": "./src/services/index.js",
+    "#middlewares": "./src/middlewares/index.js",
+    "#providers": "./src/providers/index.js"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon --env-file=./env/.env.development ./src/server.js",
+    "prod": "node --env-file=./env/.env.production src/server.js",
+    "prisma:push": "dotenv -e ./env/.env.development -- prisma db push",
+    "prisma:studio": "dotenv -e ./env/.env.development -- prisma studio",
+    "prisma:generate": "dotenv -e ./env/.env.development -- prisma generate",
+    "seed": "pnpm run prisma:generate && node ./scripts/seed.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "",
@@ -13,14 +36,18 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.4.2",
     "@prisma/client": "^7.4.2",
+    "awilix": "^13.0.3",
     "dotenv": "^17.3.1",
-    "dotenv-cli": "^11.0.0",
     "express": "^5.2.1",
     "pg": "^8.19.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "dotenv-cli": "^11.0.0",
+    "eslint": "^10.0.2",
     "nodemon": "^3.1.14",
+    "prettier": "^3.8.1",
     "prisma": "^7.4.2"
   }
 }
