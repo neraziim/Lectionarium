@@ -48,20 +48,17 @@
 
 ## 도구 및 방법
 
-### backend
+### 기술 스택
 
-- node.js / express
-- postgresql
+**backend**
 
-### frontend
+- javascript / node.js / express
+- PostgreSQL / Prisma
 
-- Next.js
+**frontend**
 
-### 천주교 성경 DB 구축
-
-- ~~json 파일을 구하지 못해서 한국천주교주교회의 사이트에서 크롤링을 시도하기로 했습니다... 개신교는 어둠의 경로가 있던데 왜 천주교는 없는 것일까요? 사람들이 가톨릭굿뉴스에 만족하는 것일까요?~~
-- ~~(26. 3. 4.) 한국천주교주교회의 사이트에서 크롤링을 시도하는 데 성공했습니다.(마태오복음 1장)~~
-- (26. 3. 5.) 한국천주교주교회의 문의 결과 저작권 이슈로 배포는 불가능하지만... 개인 공부 목적으로 마저 만들어보려고 합니다. ~~scihub를 아십니까?~~ ~~MZ식 종교개혁(에?)~~
+- javascript / Next.js
+- Vanilla-extract
 
 ### 전례력 계산 로직
 
@@ -70,7 +67,7 @@
 - 독서 주기 계산식: year % 3 의 값이 1인 경우 '가해', 2인 경우 '나해', 0인 경우 '다해'
 
   ```
-  cosnt lectionary = (year) => {
+  const lectionary = (year) => {
     return LectionaryYear = year % 3 === 1 ? '가해' : year % 3 === 2 ? '나해' : '다해';
   }
   ```
@@ -109,7 +106,7 @@
     if (dayOfWeek >= 5) {
       movedEpiphany.setDate(epiphany.getDate() + (7 - dayOfWeek))
       } else {
-      movedEpiphany.setDate(epiphany.getDate() - dayOfWeeek);
+      movedEpiphany.setDate(epiphany.getDate() - dayOfWeek);
     }
 
     //주님 세례 축일
@@ -119,7 +116,7 @@
   }
   ```
 
-- 가우스 부활절 알고리즘 [3]()(Bien, 2004)
+- 가우스 부활절 알고리즘 [3](https://doi.org/10.1007/s00407-004-0078-5)(Bien, 2004)
 
   ```
   function computus(year) {
@@ -185,6 +182,131 @@
     //return annums;
   }
   ```
+
+### 천주교 성경 DB 구축
+
+- ~~json 파일을 구하지 못해서 한국천주교주교회의 사이트에서 크롤링을 시도하기로 했습니다... 개신교는 어둠의 경로가 있던데 왜 천주교는 없는 것일까요? 사람들이 가톨릭굿뉴스에 만족하는 것일까요?~~
+- ~~(26. 3. 4.) 한국천주교주교회의 사이트에서 크롤링을 시도하는 데 성공했습니다.(마태오복음 1장)~~
+- (26. 3. 5.) 한국천주교주교회의 문의 결과 저작권 이슈로 배포는 불가능하지만... 개인 공부 목적으로 마저 만들어보려고 합니다. ~~scihub를 아십니까?~~ ~~MZ식 종교개혁(에?)~~
+
+**ERD**
+
+```mermaid
+erDiagram
+    CALENDARIUM ||--o{ LECTIONARIUM : "하나의 전례일은 여러 독서를 가짐"
+    LECTIONARIUM ||--o{ LECTIO_RANGE : "하나의 독서는 여러 독서 범위를 가짐"
+    BIBLE ||--o{ LECTIO_RANGE : "범위 쿼리를 통해 성경 본문 참조"
+
+    CALENDARIUM {
+        Int id PK
+        String code UK "ADV-1-0"
+        Enum lectionaryYear "가, 나, 다"
+        Enum season "대림, 성탄, 사순, 부활, 연중"
+        Int week "1"
+        String name UK "대림 제1주일"
+        Enum color "Violet, Rose, White, Red, Green"
+    }
+
+    LECTIONARIUM {
+        Int id PK
+        Int calendariumId FK
+        String lectioType "제1독서, 복음 등"
+        String book "Gn, Mt 등"
+    }
+
+    LECTIO_RANGE {
+        Int id PK
+        Int lectionariumId FK
+        Int startChapter
+        Int startVerse
+        Int endChapter
+        Int endVerse
+        String part "ㄷ, ㄹ"
+        Int sequence "읽는 순서"
+    }
+
+    BIBLE {
+        Int id PK
+        String book "Gn, Mt 등"
+        Int chapter
+        Int verse
+        String text
+    }
+
+```
+
+<details>
+<summary> Prisma Schema 상세보기 </summary>
+
+```
+enum LectionaryYear {
+  가
+  나
+  다
+}
+
+enum LiturgicalSeason {
+  대림
+  성탄
+  사순
+  부활
+  연중
+}
+
+enum LiturgicalColor {
+  Violet
+  Rose
+  White
+  Red
+  Green
+}
+
+// 1. 전례일
+model Calendarium {
+  id Int @id @default(autoincrement())
+  code String @unique
+  name String @unique
+  lectionaryYear LectionaryYear
+  season LiturgicalSeason
+  week Int
+  color LiturgicalColor
+  lectiones Lectionarium[]  
+}
+
+// 2. 말씀 전례
+model Lectionarium {
+  id Int @id @default(autoincrement())
+  calendariumId Int
+  calendarium Calendarium @relation(fields: [calendariumId], references: [id])
+  lectioType String
+  book String
+  ranges LectioRange[]
+}
+
+// 3. 독서 범위
+model LectioRange {
+  id Int @id @default(autoincrement())
+  lectionariumId Int
+  lectionarium Lectionarium @relation(fields: [lectionariumId], references: [id])
+  startChapter Int
+  startVerse Int
+  endChapter Int
+  endVerse Int
+  part String?
+  sequence Int
+}
+
+// 4. 성경 본문 DB
+model Bible {
+  id Int @id @default(autoincrement())
+  book String
+  chapter Int
+  verse Int
+  text String
+}
+```
+
+</details>
 
 ## 주요 기능
 
