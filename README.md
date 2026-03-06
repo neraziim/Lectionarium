@@ -270,7 +270,7 @@ model Calendarium {
   season LiturgicalSeason
   week Int
   color LiturgicalColor
-  lectiones Lectionarium[]  
+  lectiones Lectionarium[]
 }
 
 // 2. 말씀 전례
@@ -316,15 +316,23 @@ model Bible {
 
 ## 진행상황
 
-- [ ] 주일 독서/복음 계산 로직 구현
-- [ ] 천주교 성경 DB구축
-- [ ] 엉망이어도 일단 보이는 사이트 만들기
+- [x] [BE] ERD 및 스키마 설계
+- [ ] [BE] DB 조회 Repository 구현
+- [ ] [BE] 전례시기 및 주일 독서/복음 계산 Service 로직 작성
+- [ ] [BE] Controller 구현
+- [ ] [BE] errorhandler 등 기타 필요한 미들웨어 구현
+- [ ] [BE] 크롤링을 통한 천주교 성경 DB구축
 - [ ] 피드백 1차
-- [ ] 평일 독서/복음 계산 로직 구현
-- [ ] 축일 우선순위 로직 구현
+- [ ] [FE] 공통 컴포넌트 분리
+- [ ] [FE] RSC - api 연결
+- [ ] [FE] RCC 작성(엉망이어도 일단 보이는 사이트 만들기........ 프론트는 작업을 어케 나누는지도 모르겠네요..🫠)
+- [ ] 피드백 2차
 
 ### 나중에 하면 재미있겠다..
 
+- [ ] ?!??!
+- [ ] 평일 독서/복음 계산 로직 구현
+- [ ] 축일 우선순위 로직 구현
 - 성경 각주도 추가해서 본문 넘어다닐 수 있도록 하기
 - 본문 비교하기..!!! 교안 쓸 때 진짜 편하겠다
 
