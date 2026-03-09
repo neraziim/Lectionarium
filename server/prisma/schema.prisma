@@ -1,0 +1,77 @@
+//Prisma Client 생성
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+//데이터베이스 연결 설정
+datasource db {
+  provider = "postgresql"
+}
+
+enum LectionaryYear {
+  YEAR_A // 가해
+  YEAR_B // 나해
+  YEAR_C // 다해
+}
+
+enum LiturgicalSeason {
+  ADVENTUS
+  NATIVITATIS
+  QUADRAGESIMA
+  TRIDUUM_PASCHALE
+  PASCHALE
+  ANNUM
+}
+
+enum LiturgicalColor {
+  Violet
+  Rose
+  White
+  Red
+  Green
+}
+
+// 1. 전례일
+model Calendarium {
+  id             Int              @id @default(autoincrement())
+  code           String           @unique
+  name           String           @unique
+  lectionaryYear LectionaryYear
+  season         LiturgicalSeason
+  week           Int
+  color          LiturgicalColor
+  lectiones      Lectionarium[]
+}
+
+// 2. 말씀 전례
+model Lectionarium {
+  id            Int           @id @default(autoincrement())
+  calendariumId Int
+  calendarium   Calendarium   @relation(fields: [calendariumId], references: [id])
+  lectioType    String
+  book          String
+  ranges        LectioRange[]
+}
+
+// 3. 독서 범위
+model LectioRange {
+  id             Int          @id @default(autoincrement())
+  lectionariumId Int
+  lectionarium   Lectionarium @relation(fields: [lectionariumId], references: [id])
+  startChapter   Int
+  startVerse     Int
+  endChapter     Int
+  endVerse       Int
+  part           String?
+  sequence       Int
+}
+
+// 4. 성경 본문 DB
+model Bible {
+  id      Int    @id @default(autoincrement())
+  book    String
+  chapter Int
+  verse   Int
+  text    String
+}
