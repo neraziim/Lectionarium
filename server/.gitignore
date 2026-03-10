@@ -1,6 +1,7 @@
 node_modules/
 env/
 .env
+generated/
 dist/
 .pnpm-debug.log
 temp_bible/

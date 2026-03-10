@@ -1,6 +1,8 @@
 import express from 'express';
+import { prisma } from '#db/prisma.js';
+import { config } from '#config';
+
 const app = express();
-const PORT = 5001;
 
 app.use(express.json());
 
@@ -11,8 +13,13 @@ app.get('/', (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
+app.listen(config.PORT, () => {
   console.log(
-    `🚀 서버가 ${process.env.NODE_ENV || 'development'} 환경, 포트 ${PORT}에서 실행 중입니다!`,
+    `🚀 [${config.NODE_ENV}] Server running at http://localhost:${config.PORT}`,
   );
 });
+
+process.on('SIGINT', async () => {
+  await prisma.$disconnect();
+  process.exit(0);
+})

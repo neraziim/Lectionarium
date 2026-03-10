@@ -1,5 +1,10 @@
 //주일과 축일 독서의 주기
 export const ANNI_LECTIONARII = ['다해', '가해', '나해'];
+export const LECTIONARY_MAP = {
+  YEAR_A: '가해',
+  YEAR_B: '나해',
+  YEAR_C: '다해',
+};
 
 //전례력
 export const TEMPUS = {
